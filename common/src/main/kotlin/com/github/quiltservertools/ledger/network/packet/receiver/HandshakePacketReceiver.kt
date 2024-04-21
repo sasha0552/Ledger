@@ -1,6 +1,5 @@
 package com.github.quiltservertools.ledger.network.packet.receiver
 
-import com.github.quiltservertools.ledger.Ledger
 import com.github.quiltservertools.ledger.commands.CommandConsts
 import com.github.quiltservertools.ledger.logInfo
 import com.github.quiltservertools.ledger.network.Networking
@@ -10,10 +9,10 @@ import com.github.quiltservertools.ledger.network.packet.handshake.HandshakeCont
 import com.github.quiltservertools.ledger.network.packet.handshake.HandshakePacket
 import com.github.quiltservertools.ledger.network.packet.handshake.ModInfo
 import com.github.quiltservertools.ledger.registry.ActionRegistry
-import me.lucko.fabric.api.permissions.v0.Permissions
-import net.fabricmc.fabric.api.networking.v1.PacketSender
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
-import net.fabricmc.loader.api.FabricLoader
+import org.sasha0552.ledger.LedgerExpectPlatform
+import org.sasha0552.ledger.networking.PacketSender
+import dev.architectury.networking.NetworkManager
+import org.sasha0552.ledger.LedgerExpectPlatform
 import net.minecraft.nbt.NbtCompound
 import net.minecraft.network.PacketByteBuf
 import net.minecraft.server.MinecraftServer
@@ -30,7 +29,7 @@ class HandshakePacketReceiver : Receiver {
         buf: PacketByteBuf,
         sender: PacketSender
     ) {
-        if (!Permissions.check(player, "ledger.networking", CommandConsts.PERMISSION_LEVEL)) return
+        if (!LedgerExpectPlatform.Permissions_check(player, "ledger.networking", CommandConsts.PERMISSION_LEVEL)) return
         // This should be sent by the client whenever a player joins with a client mod
         val nbt = buf.readNbt()
         // We do some validation on the packet to make sure it's complete and intact
@@ -38,8 +37,7 @@ class HandshakePacketReceiver : Receiver {
         if (info.isPresent) {
             val modid = info.get().modid
             val modVersion = info.get().version
-            val ledgerVersion = FabricLoader.getInstance().getModContainer(
-                Ledger.MOD_ID).get().metadata.version.friendlyString
+            val ledgerVersion = LedgerExpectPlatform.getModVersionFriendlyString()
             if (Networking.PROTOCOL_VERSION == info.get().protocolVersion) {
                 logInfo("${player.name.string} joined the server with a Ledger compatible client mod")
                 logInfo("Mod: $modid, Version: $modVersion")
@@ -47,7 +45,7 @@ class HandshakePacketReceiver : Receiver {
                 // Player has networking permissions so we send a response
                 val packet = HandshakePacket()
                 packet.populate(HandshakeContent(Networking.PROTOCOL_VERSION, ledgerVersion, ActionRegistry.getTypes().toList()))
-                ServerPlayNetworking.send(player, packet.channel, packet.buf)
+                NetworkManager.sendToPlayer(player, packet.channel, packet.buf)
                 player.enableNetworking()
             } else {
                 player.sendMessage(

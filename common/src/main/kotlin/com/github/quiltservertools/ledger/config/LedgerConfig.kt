@@ -2,7 +2,7 @@ package com.github.quiltservertools.ledger.config
 
 import com.uchuhimo.konf.Config
 import com.uchuhimo.konf.source.toml
-import net.fabricmc.loader.api.FabricLoader
+import org.sasha0552.ledger.LedgerExpectPlatform
 
 const val CONFIG_PATH = "ledger.toml"
 
@@ -14,6 +14,4 @@ val config: Config = Config {
     addSpec(NetworkingSpec)
 }
     .from.toml.resource(CONFIG_PATH)
-    .from.toml.watchFile(FabricLoader.getInstance().configDir.resolve("ledger.toml").toFile())
-    .from.env()
-    .from.systemProperties()
+    .from.toml.watchFile(LedgerExpectPlatform.getConfigDir().resolve("ledger.toml").toFile())

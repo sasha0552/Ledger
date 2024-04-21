@@ -1,0 +1,121 @@
+plugins {
+    id "com.github.johnrengelman.shadow" version "7.1.2"
+}
+
+architectury {
+    platformSetupLoomIde()
+    forge()
+}
+
+configurations {
+    common
+    shadowCommon // Don't use shadow from the shadow plugin since it *excludes* files.
+    compileClasspath.extendsFrom common
+    runtimeClasspath.extendsFrom common
+    developmentForge.extendsFrom common
+    transitiveInclude {
+        exclude group: "org.jetbrains.kotlin"
+        exclude group: "org.jetbrains.kotlinx"
+        exclude group: "org.slf4j"
+    }
+}
+
+dependencies {
+    forge "net.minecraftforge:forge:${rootProject.forge_version}"
+    // Remove the next line if you don't want to depend on the API
+    modApi "dev.architectury:architectury-forge:${rootProject.architectury_version}"
+
+    // Kotlin
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:${rootProject.kotlinx_coroutines_version}"
+
+    // Database
+    transitiveInclude "org.jetbrains.exposed:exposed-core:${rootProject.exposed_version}"
+    transitiveInclude "org.jetbrains.exposed:exposed-dao:${rootProject.exposed_version}"
+    transitiveInclude "org.jetbrains.exposed:exposed-jdbc:${rootProject.exposed_version}"
+    transitiveInclude "org.jetbrains.exposed:exposed-java-time:${rootProject.exposed_version}"
+    transitiveInclude "org.xerial:sqlite-jdbc:${rootProject.sqlite_jdbc_version}"
+
+    // Config
+    shadowCommon "com.uchuhimo:konf-core:${rootProject.konf_version}"
+    shadowCommon "com.uchuhimo:konf-toml:${rootProject.konf_version}"
+
+    configurations.transitiveInclude.resolvedConfiguration.resolvedArtifacts.each { artifact ->
+        include artifact.moduleVersion.id.toString()
+    }
+
+    common(project(path: ":common", configuration: "namedElements")) { transitive false }
+    shadowCommon(project(path: ":common", configuration: "transformProductionForge")) { transitive = false }
+}
+
+processResources {
+    inputs.property "version", project.version
+
+    filesMatching("META-INF/mods.toml") {
+        expand "version": project.version
+    }
+}
+
+shadowJar {
+    exclude "fabric.mod.json"
+    exclude "architectury.common.json"
+
+    configurations = [project.configurations.shadowCommon]
+    archiveClassifier = "dev-shadow"
+
+    exclude("DebugProbesKt.bin")
+    exclude("META-INF/com.android.tools/**")
+    exclude("META-INF/maven/**")
+    exclude("META-INF/proguard/**")
+    exclude("META-INF/services/**")
+    exclude("META-INF/versions/**")
+    exclude("META-INF/*.kotlin_module")
+    exclude("META-INF/LICENSE*")
+    exclude("META-INF/NOTICE*")
+    exclude("_COROUTINE/**")
+    exclude("com/google/gson/**")
+    exclude("kotlin/**")
+    exclude("kotlinx/**")
+    exclude("org/intellij/**")
+    exclude("org/jetbrains/annotations/**")
+    exclude("org/slf4j/**")
+
+    def relocPath = "com.github.quiltservertools.libs."
+    relocate("com.fasterxml.jackson", relocPath + "com.fasterxml.jackson")
+    relocate("com.moandjiezana.toml", relocPath + "com.moandjiezana.toml")
+    relocate("com.uchuhimo.konf", relocPath + "com.uchuhimo.konf")
+    relocate("javassist", relocPath + "javassist")
+    relocate("org.apache.commons.lang3", relocPath + "org.apache.commons.lang3")
+    relocate("org.apache.commons.text", relocPath + "org.apache.commons.text")
+    relocate("org.reflections", relocPath + "org.reflections")
+}
+
+remapJar {
+    input.set shadowJar.archiveFile
+    dependsOn shadowJar
+}
+
+sourcesJar {
+    def commonSources = project(":common").sourcesJar
+    dependsOn commonSources
+    from commonSources.archiveFile.map { zipTree(it) }
+}
+
+components.java {
+    withVariantsFromConfiguration(project.configurations.shadowRuntimeElements) {
+        skip()
+    }
+}
+
+publishing {
+    publications {
+        mavenForge(MavenPublication) {
+            artifactId = rootProject.archives_base_name + "-" + project.name
+            from components.java
+        }
+    }
+
+    // See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
+    repositories {
+        // Add repositories to publish to here.
+    }
+}

@@ -1,0 +1,38 @@
+{
+    "schemaVersion": 1,
+    "id": "ledger",
+    "version": "${version}",
+    "name": "Ledger",
+    "description": "Logs world events and allows for them to be rolled back",
+    "authors": [
+        "Potatoboy9999",
+        "sasha0552"
+    ],
+    "contact": {
+        "homepage": "https://github.com/sasha0552/Ledger",
+        "sources": "https://github.com/sasha0552/Ledger",
+        "issues": "https://github.com/sasha0552/Ledger/issues"
+    },
+    "license": "LGPL-3.0-only",
+    "icon": "assets/ledger/icon.png",
+    "environment": "server",
+    "entrypoints": {
+        "server": [
+            {
+                "value": "org.sasha0552.ledger.fabric.LedgerFabric"
+            }
+        ]
+    },
+    "mixins": [
+        "ledger-common.mixins.json"
+    ],
+    "depends": {
+        "architectury": ">=9.2.14",
+        "fabric": "*",
+        "fabric-language-kotlin": "*",
+        "minecraft": ">=1.20.1"
+    },
+    "breaks": {
+        "cardboard": "*"
+    }
+}

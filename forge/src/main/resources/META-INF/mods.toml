@@ -1,0 +1,42 @@
+modLoader = "javafml"
+loaderVersion = "[47,)"
+issueTrackerURL = "https://github.com/sasha0552/Ledger/issues"
+license = "LGPL-3.0-only"
+logoFile="assets/ledger/icon.png"
+
+[[mods]]
+modId = "ledger"
+version = "${version}"
+displayName = "Ledger"
+authors = "Potatoboy9999, sasha0552"
+description = '''
+Logs world events and allows for them to be rolled back
+'''
+
+[[dependencies.ledger]]
+modId = "architectury"
+mandatory = true
+versionRange = "[9.1.14,)"
+ordering = "AFTER"
+side = "BOTH"
+
+[[dependencies.ledger]]
+modId = "forge"
+mandatory = true
+versionRange = "[47,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.ledger]]
+modId = "kotlinforforge"
+mandatory = true
+versionRange = "[4,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.ledger]]
+modId = "minecraft"
+mandatory = true
+versionRange = "[1.20.1,)"
+ordering = "NONE"
+side = "BOTH"

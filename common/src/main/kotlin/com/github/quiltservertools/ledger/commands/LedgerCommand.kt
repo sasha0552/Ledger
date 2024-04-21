@@ -13,18 +13,18 @@ import com.github.quiltservertools.ledger.commands.subcommands.StatusCommand
 import com.github.quiltservertools.ledger.commands.subcommands.TeleportCommand
 import com.github.quiltservertools.ledger.utility.BrigadierUtils
 import com.github.quiltservertools.ledger.utility.Dispatcher
-import me.lucko.fabric.api.permissions.v0.Permissions
+import org.sasha0552.ledger.LedgerExpectPlatform
 import net.minecraft.server.command.CommandManager.literal
 
 fun registerCommands(dispatcher: Dispatcher) {
     val rootNode =
-        literal("ledger").requires(Permissions.require("ledger.commands.root", CommandConsts.PERMISSION_LEVEL))
+        literal("ledger").requires(LedgerExpectPlatform.Permissions_require("ledger.commands.root", CommandConsts.PERMISSION_LEVEL))
             .build()
 
     dispatcher.root.addChild(rootNode)
     dispatcher.root.addChild(
         literal("lg")
-            .requires(Permissions.require("ledger.commands.root", CommandConsts.PERMISSION_LEVEL)).redirect(rootNode)
+            .requires(LedgerExpectPlatform.Permissions_require("ledger.commands.root", CommandConsts.PERMISSION_LEVEL)).redirect(rootNode)
             .build()
     )
 

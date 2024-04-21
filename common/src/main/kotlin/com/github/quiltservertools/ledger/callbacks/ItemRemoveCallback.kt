@@ -1,7 +1,7 @@
 package com.github.quiltservertools.ledger.callbacks
 
-import net.fabricmc.fabric.api.event.Event
-import net.fabricmc.fabric.api.event.EventFactory
+import dev.architectury.event.Event
+import dev.architectury.event.EventFactory
 import net.minecraft.item.ItemStack
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.server.world.ServerWorld
@@ -13,12 +13,6 @@ fun interface ItemRemoveCallback {
     companion object {
         @JvmField
         val EVENT: Event<ItemRemoveCallback> =
-            EventFactory.createArrayBacked(ItemRemoveCallback::class.java) { listeners ->
-                ItemRemoveCallback { stack, pos, world, source, player ->
-                    for (listener in listeners) {
-                        listener.remove(stack, pos, world, source, player)
-                    }
-                }
-            }
+            EventFactory.createLoop(ItemRemoveCallback::class.java)
     }
 }

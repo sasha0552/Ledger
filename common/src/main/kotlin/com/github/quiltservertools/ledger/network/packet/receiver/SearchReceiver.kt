@@ -12,8 +12,8 @@ import com.github.quiltservertools.ledger.network.packet.response.ResponsePacket
 import com.github.quiltservertools.ledger.utility.MessageUtils
 import com.github.quiltservertools.ledger.utility.TextColorPallet
 import kotlinx.coroutines.launch
-import me.lucko.fabric.api.permissions.v0.Permissions
-import net.fabricmc.fabric.api.networking.v1.PacketSender
+import org.sasha0552.ledger.LedgerExpectPlatform
+import org.sasha0552.ledger.networking.PacketSender
 import net.minecraft.network.PacketByteBuf
 import net.minecraft.server.MinecraftServer
 import net.minecraft.server.network.ServerPlayNetworkHandler
@@ -28,8 +28,8 @@ class SearchReceiver : Receiver {
         buf: PacketByteBuf,
         sender: PacketSender
     ) {
-        if (!Permissions.check(player, "ledger.networking", CommandConsts.PERMISSION_LEVEL) ||
-            !Permissions.check(player, "ledger.commands.search", CommandConsts.PERMISSION_LEVEL)
+        if (!LedgerExpectPlatform.Permissions_check(player, "ledger.networking", CommandConsts.PERMISSION_LEVEL) ||
+            !LedgerExpectPlatform.Permissions_check(player, "ledger.commands.search", CommandConsts.PERMISSION_LEVEL)
         ) {
             ResponsePacket.sendResponse(
                 ResponseContent(LedgerPacketTypes.SEARCH.id, ResponseCodes.NO_PERMISSION.code),

@@ -10,11 +10,11 @@ import com.github.quiltservertools.ledger.network.Networking.disableNetworking
 import com.github.quiltservertools.ledger.utility.inspectBlock
 import com.github.quiltservertools.ledger.utility.isInspecting
 import kotlinx.coroutines.launch
-import net.fabricmc.fabric.api.event.player.AttackBlockCallback
-import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents
-import net.fabricmc.fabric.api.event.player.UseBlockCallback
-import net.fabricmc.fabric.api.networking.v1.PacketSender
-import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents
+import dev.architectury.event.events.common.InteractionEvent
+import dev.architectury.event.events.common.BlockEvent
+import dev.architectury.event.events.common.InteractionEvent
+import org.sasha0552.ledger.networking.PacketSender
+import dev.architectury.event.events.common.PlayerEvent
 import net.minecraft.block.BlockState
 import net.minecraft.block.entity.BlockEntity
 import net.minecraft.entity.ItemEntity
@@ -30,11 +30,11 @@ import net.minecraft.util.math.Direction
 import net.minecraft.world.World
 
 fun registerPlayerListeners() {
-    PlayerBlockBreakEvents.AFTER.register(::onBlockBreak)
-    ServerPlayConnectionEvents.JOIN.register(::onJoin)
-    ServerPlayConnectionEvents.DISCONNECT.register(::onLeave)
-    AttackBlockCallback.EVENT.register(::onBlockAttack)
-    UseBlockCallback.EVENT.register(::onUseBlock)
+    BlockEvent.BREAK.register(::onBlockBreak)
+    PlayerEvent.PLAYER_JOIN.register(::onJoin)
+    PlayerEvent.PLAYER_QUIT.register(::onLeave)
+    InteractionEvent.LEFT_CLICK_BLOCK.register(::onBlockAttack)
+    InteractionEvent.RIGHT_CLICK_BLOCK.register(::onUseBlock)
     ItemPickUpCallback.EVENT.register(::onItemPickUp)
     ItemDropCallback.EVENT.register(::onItemDrop)
 }

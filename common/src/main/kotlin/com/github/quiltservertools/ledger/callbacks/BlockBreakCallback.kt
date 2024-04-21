@@ -1,8 +1,8 @@
 package com.github.quiltservertools.ledger.callbacks
 
 import com.github.quiltservertools.ledger.utility.Sources
-import net.fabricmc.fabric.api.event.Event
-import net.fabricmc.fabric.api.event.EventFactory
+import dev.architectury.event.Event
+import dev.architectury.event.EventFactory
 import net.minecraft.block.BlockState
 import net.minecraft.block.entity.BlockEntity
 import net.minecraft.entity.player.PlayerEntity
@@ -28,12 +28,6 @@ fun interface BlockBreakCallback {
     companion object {
         @JvmField
         val EVENT: Event<BlockBreakCallback> =
-            EventFactory.createArrayBacked(BlockBreakCallback::class.java) { listeners ->
-                BlockBreakCallback { world, pos, state, entity, source, player ->
-                    for (listener in listeners) {
-                        listener.breakBlock(world, pos, state, entity, source, player)
-                    }
-                }
-            }
+            EventFactory.createLoop(BlockBreakCallback::class.java)
     }
 }

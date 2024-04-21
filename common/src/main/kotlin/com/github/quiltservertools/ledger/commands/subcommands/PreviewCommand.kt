@@ -12,14 +12,14 @@ import com.github.quiltservertools.ledger.utility.LiteralNode
 import com.github.quiltservertools.ledger.utility.MessageUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import me.lucko.fabric.api.permissions.v0.Permissions
+import org.sasha0552.ledger.LedgerExpectPlatform
 import net.minecraft.server.command.CommandManager
 import net.minecraft.text.Text
 
 object PreviewCommand : BuildableCommand {
     override fun build(): LiteralNode {
         return CommandManager.literal("preview")
-            .requires(Permissions.require("ledger.commands.preview", CommandConsts.PERMISSION_LEVEL))
+            .requires(LedgerExpectPlatform.Permissions_require("ledger.commands.preview", CommandConsts.PERMISSION_LEVEL))
             .then(CommandManager.literal("rollback")
                 .then(
                     SearchParamArgument.argument(CommandConsts.PARAMS)

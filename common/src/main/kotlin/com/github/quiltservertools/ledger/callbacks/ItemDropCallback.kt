@@ -1,7 +1,7 @@
 package com.github.quiltservertools.ledger.callbacks
 
-import net.fabricmc.fabric.api.event.Event
-import net.fabricmc.fabric.api.event.EventFactory
+import dev.architectury.event.Event
+import dev.architectury.event.EventFactory
 import net.minecraft.entity.ItemEntity
 import net.minecraft.entity.player.PlayerEntity
 
@@ -10,12 +10,6 @@ fun interface ItemDropCallback {
 
     companion object {
         @JvmField
-        val EVENT: Event<ItemDropCallback> = EventFactory.createArrayBacked(ItemDropCallback::class.java) { listeners ->
-            ItemDropCallback { entity, player ->
-                for (listener in listeners) {
-                    listener.drop(entity, player)
-                }
-            }
-        }
+        val EVENT: Event<ItemDropCallback> = EventFactory.createLoop(ItemDropCallback::class.java)
     }
 }

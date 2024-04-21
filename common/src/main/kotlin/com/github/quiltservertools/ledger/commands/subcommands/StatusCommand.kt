@@ -11,9 +11,8 @@ import com.github.quiltservertools.ledger.utility.TextColorPallet
 import com.github.quiltservertools.ledger.utility.literal
 import com.github.quiltservertools.ledger.utility.translate
 import kotlinx.coroutines.launch
-import me.lucko.fabric.api.permissions.v0.Permissions
-import net.fabricmc.loader.api.FabricLoader
-import net.fabricmc.loader.api.SemanticVersion
+import org.sasha0552.ledger.LedgerExpectPlatform
+import org.sasha0552.ledger.LedgerExpectPlatform
 import net.minecraft.server.command.CommandManager
 import net.minecraft.text.ClickEvent
 import net.minecraft.text.Text
@@ -21,7 +20,7 @@ import net.minecraft.text.Text
 object StatusCommand : BuildableCommand {
     override fun build(): LiteralNode =
         CommandManager.literal("status")
-            .requires(Permissions.require("ledger.commands.status", CommandConsts.PERMISSION_LEVEL))
+            .requires(LedgerExpectPlatform.Permissions_require("ledger.commands.status", CommandConsts.PERMISSION_LEVEL))
             .executes { status(it) }
             .build()
 
@@ -49,7 +48,7 @@ object StatusCommand : BuildableCommand {
                 {
                     Text.translatable(
                         "text.ledger.status.version",
-                        getVersion().friendlyString.literal()
+                        LedgerExpectPlatform.getModVersionFriendlyString().literal()
                             .setStyle(TextColorPallet.secondaryVariant)
                     ).setStyle(TextColorPallet.secondary)
                 },

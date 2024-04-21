@@ -12,14 +12,14 @@ import com.github.quiltservertools.ledger.utility.Context
 import com.github.quiltservertools.ledger.utility.LiteralNode
 import com.github.quiltservertools.ledger.utility.TextColorPallet
 import kotlinx.coroutines.launch
-import me.lucko.fabric.api.permissions.v0.Permissions
+import org.sasha0552.ledger.LedgerExpectPlatform
 import net.minecraft.server.command.CommandManager.literal
 import net.minecraft.text.Text
 
 object PurgeCommand : BuildableCommand {
     override fun build(): LiteralNode {
         return literal("purge")
-            .requires(Permissions.require("ledger.commands.purge", config[SearchSpec.purgePermissionLevel]))
+            .requires(LedgerExpectPlatform.Permissions_require("ledger.commands.purge", config[SearchSpec.purgePermissionLevel]))
             .then(SearchParamArgument.argument(CommandConsts.PARAMS).executes {
                 runPurge(it, SearchParamArgument.get(it, CommandConsts.PARAMS))
             })

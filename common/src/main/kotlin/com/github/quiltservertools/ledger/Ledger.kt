@@ -25,10 +25,9 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
-import net.fabricmc.api.DedicatedServerModInitializer
-import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents
-import net.fabricmc.loader.api.FabricLoader
+import dev.architectury.event.events.common.CommandRegistrationEvent
+import dev.architectury.event.events.common.LifecycleEvent
+import org.sasha0552.ledger.LedgerExpectPlatform
 import net.minecraft.registry.Registries
 import net.minecraft.server.MinecraftServer
 import net.minecraft.util.Identifier
@@ -43,7 +42,7 @@ import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 import com.github.quiltservertools.ledger.config.config as realConfig
 
-object Ledger : DedicatedServerModInitializer, CoroutineScope {
+object Ledger : CoroutineScope {
     const val MOD_ID = "ledger"
     val DEFAULT_DATABASE = SQLiteDialect.dialectName
 
@@ -59,23 +58,23 @@ object Ledger : DedicatedServerModInitializer, CoroutineScope {
 
     override val coroutineContext: CoroutineContext = Dispatchers.IO
 
-    override fun onInitializeServer() {
-        val version = FabricLoader.getInstance().getModContainer(MOD_ID).get().metadata.version
-        logInfo("Initializing Ledger ${version.friendlyString}")
+    fun onInitializeServer() {
+        val version = LedgerExpectPlatform.getModVersionFriendlyString()
+        logInfo("Initializing Ledger $version")
 
-        if (!Files.exists(FabricLoader.getInstance().configDir.resolve(CONFIG_PATH))) {
+        if (!Files.exists(LedgerExpectPlatform.getConfigDir().resolve(CONFIG_PATH))) {
             logInfo("No config file, Creating")
             Files.copy(
-                FabricLoader.getInstance().getModContainer(MOD_ID).get().getPath(CONFIG_PATH),
-                FabricLoader.getInstance().configDir.resolve(CONFIG_PATH)
+                LedgerExpectPlatform.getModFile(CONFIG_PATH),
+                LedgerExpectPlatform.getConfigDir().resolve(CONFIG_PATH)
             )
         }
         realConfig.validateRequired()
         config = realConfig
 
-        ServerLifecycleEvents.SERVER_STARTING.register(::serverStarting)
-        ServerLifecycleEvents.SERVER_STOPPED.register(::serverStopped)
-        CommandRegistrationCallback.EVENT.register { dispatcher, _, _ -> registerCommands(dispatcher) }
+        LifecycleEvent.SERVER_STARTING.register(::serverStarting)
+        LifecycleEvent.SERVER_STOPPED.register(::serverStopped)
+        CommandRegistrationEvent.EVENT.register { dispatcher, _, _ -> registerCommands(dispatcher) }
     }
 
     private fun serverStarting(server: MinecraftServer) {

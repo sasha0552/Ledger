@@ -1,7 +1,7 @@
 package com.github.quiltservertools.ledger.callbacks
 
-import net.fabricmc.fabric.api.event.Event
-import net.fabricmc.fabric.api.event.EventFactory
+import dev.architectury.event.Event
+import dev.architectury.event.EventFactory
 import net.minecraft.entity.Entity
 import net.minecraft.entity.damage.DamageSource
 import net.minecraft.util.math.BlockPos
@@ -13,12 +13,6 @@ fun interface EntityKillCallback {
     companion object {
         @JvmField
         val EVENT: Event<EntityKillCallback> =
-            EventFactory.createArrayBacked(EntityKillCallback::class.java) { listeners ->
-                EntityKillCallback { world, pos, entity, source ->
-                    for (listener in listeners) {
-                        listener.kill(world, pos, entity, source)
-                    }
-                }
-            }
+            EventFactory.createLoop(EntityKillCallback::class.java)
     }
 }

@@ -2,13 +2,13 @@ package com.github.quiltservertools.ledger.network.packet.response
 
 import com.github.quiltservertools.ledger.network.packet.LedgerPacket
 import com.github.quiltservertools.ledger.network.packet.LedgerPacketTypes
-import net.fabricmc.fabric.api.networking.v1.PacketByteBufs
-import net.fabricmc.fabric.api.networking.v1.PacketSender
+import io.netty.buffer.Unpooled
+import org.sasha0552.ledger.networking.PacketSender
 import net.minecraft.network.PacketByteBuf
 import net.minecraft.util.Identifier
 
 class ResponsePacket : LedgerPacket<ResponseContent> {
-    override var buf: PacketByteBuf = PacketByteBufs.create()
+    override var buf: PacketByteBuf = PacketByteBuf(Unpooled.buffer())
     override val channel: Identifier = LedgerPacketTypes.RESPONSE.id
     override fun populate(content: ResponseContent) {
         // Packet type, rollback response would be `ledger.rollback`

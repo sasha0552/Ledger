@@ -1,6 +1,6 @@
 package com.github.quiltservertools.ledger.network.packet
 
-import net.fabricmc.fabric.api.networking.v1.PacketSender
+import org.sasha0552.ledger.networking.PacketSender
 import net.minecraft.network.PacketByteBuf
 import net.minecraft.server.MinecraftServer
 import net.minecraft.server.network.ServerPlayNetworkHandler

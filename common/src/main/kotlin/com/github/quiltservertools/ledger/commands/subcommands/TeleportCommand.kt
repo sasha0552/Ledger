@@ -1,6 +1,6 @@
 package com.github.quiltservertools.ledger.commands.subcommands
 
-import me.lucko.fabric.api.permissions.v0.Permissions
+import org.sasha0552.ledger.LedgerExpectPlatform
 import net.minecraft.command.argument.DimensionArgumentType
 import net.minecraft.command.argument.PosArgument
 import net.minecraft.command.argument.Vec3ArgumentType
@@ -14,7 +14,7 @@ import com.github.quiltservertools.ledger.utility.LiteralNode
 object TeleportCommand : BuildableCommand {
     override fun build(): LiteralNode =
         CommandManager.literal("tp")
-            .requires(Permissions.require("ledger.commands.tp", CommandConsts.PERMISSION_LEVEL))
+            .requires(LedgerExpectPlatform.Permissions_require("ledger.commands.tp", CommandConsts.PERMISSION_LEVEL))
             .then(
                 CommandManager.argument("world", DimensionArgumentType.dimension())
                     .then(

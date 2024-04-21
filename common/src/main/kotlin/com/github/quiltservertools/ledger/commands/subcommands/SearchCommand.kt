@@ -1,7 +1,7 @@
 package com.github.quiltservertools.ledger.commands.subcommands
 
 import kotlinx.coroutines.launch
-import me.lucko.fabric.api.permissions.v0.Permissions
+import org.sasha0552.ledger.LedgerExpectPlatform
 import net.minecraft.server.command.CommandManager.literal
 import com.github.quiltservertools.ledger.Ledger
 import com.github.quiltservertools.ledger.actionutils.ActionSearchParams
@@ -18,7 +18,7 @@ import net.minecraft.text.Text
 object SearchCommand : BuildableCommand {
     override fun build(): LiteralNode {
         return literal("search")
-            .requires(Permissions.require("ledger.commands.search", CommandConsts.PERMISSION_LEVEL))
+            .requires(LedgerExpectPlatform.Permissions_require("ledger.commands.search", CommandConsts.PERMISSION_LEVEL))
             .then(
                 SearchParamArgument.argument("params")
                     .executes { search(it, SearchParamArgument.get(it, "params")) }

@@ -1,6 +1,5 @@
 package com.github.quiltservertools.ledger.utility
 
-import net.fabricmc.fabric.api.util.NbtType
 import net.minecraft.block.BlockState
 import net.minecraft.item.ItemStack
 import net.minecraft.nbt.NbtCompound
@@ -18,7 +17,7 @@ object NbtUtils {
     fun blockStateToProperties(state: BlockState): NbtCompound? {
         val stateTag = NbtHelper.fromBlockState(state)
         if (state.block.defaultState == state) return null // Don't store default block state
-        return if (stateTag.contains(PROPERTIES, NbtType.COMPOUND)) stateTag.getCompound(PROPERTIES) else null
+        return if (stateTag.contains(PROPERTIES, 10 /* NbtType.COMPOUND */)) stateTag.getCompound(PROPERTIES) else null
     }
 
     fun blockStateFromProperties(tag: NbtCompound, name: Identifier): BlockState {

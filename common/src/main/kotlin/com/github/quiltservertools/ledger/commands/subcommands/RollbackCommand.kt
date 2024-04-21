@@ -9,14 +9,14 @@ import com.github.quiltservertools.ledger.database.DatabaseManager
 import com.github.quiltservertools.ledger.utility.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import me.lucko.fabric.api.permissions.v0.Permissions
+import org.sasha0552.ledger.LedgerExpectPlatform
 import net.minecraft.server.command.CommandManager
 import net.minecraft.text.Text
 
 object RollbackCommand : BuildableCommand {
     override fun build(): LiteralNode {
         return CommandManager.literal("rollback")
-            .requires(Permissions.require("ledger.commands.rollback", CommandConsts.PERMISSION_LEVEL))
+            .requires(LedgerExpectPlatform.Permissions_require("ledger.commands.rollback", CommandConsts.PERMISSION_LEVEL))
             .then(
                 SearchParamArgument.argument("params")
                     .executes { rollback(it, SearchParamArgument.get(it, "params")) }

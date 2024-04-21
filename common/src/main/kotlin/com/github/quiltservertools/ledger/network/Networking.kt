@@ -9,8 +9,8 @@ import com.github.quiltservertools.ledger.network.packet.receiver.InspectReceive
 import com.github.quiltservertools.ledger.network.packet.receiver.PurgeReceiver
 import com.github.quiltservertools.ledger.network.packet.receiver.RollbackReceiver
 import com.github.quiltservertools.ledger.network.packet.receiver.SearchReceiver
-import net.fabricmc.fabric.api.networking.v1.PacketSender
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
+import org.sasha0552.ledger.networking.PacketSender
+import dev.architectury.networking.NetworkManager
 import net.minecraft.network.PacketByteBuf
 import net.minecraft.server.MinecraftServer
 import net.minecraft.server.network.ServerPlayNetworkHandler
@@ -33,7 +33,7 @@ object Networking {
     }
 
     private fun register(channel: Identifier, receiver: Receiver) {
-        ServerPlayNetworking.registerGlobalReceiver(channel) {
+        NetworkManager.registerReceiver(channel) {
                 server: MinecraftServer,
                 player: ServerPlayerEntity,
                 handler: ServerPlayNetworkHandler,

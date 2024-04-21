@@ -6,7 +6,7 @@ import com.github.quiltservertools.ledger.config.SearchSpec
 import com.github.quiltservertools.ledger.database.DatabaseManager
 import com.github.quiltservertools.ledger.network.Networking.hasNetworking
 import com.github.quiltservertools.ledger.network.packet.action.ActionPacket
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
+import dev.architectury.networking.NetworkManager
 import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.text.ClickEvent
 import net.minecraft.text.HoverEvent
@@ -31,7 +31,7 @@ object MessageUtils {
                 networkResults.actions.forEach {
                     val packet = ActionPacket()
                     packet.populate(it)
-                    ServerPlayNetworking.send(source.player, packet.channel, packet.buf)
+                    NetworkManager.sendToPlayer(source.player, packet.channel, packet.buf)
                 }
             }
             return
