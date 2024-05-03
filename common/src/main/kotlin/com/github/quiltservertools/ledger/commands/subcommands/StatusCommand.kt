@@ -12,7 +12,6 @@ import com.github.quiltservertools.ledger.utility.literal
 import com.github.quiltservertools.ledger.utility.translate
 import kotlinx.coroutines.launch
 import org.sasha0552.ledger.LedgerExpectPlatform
-import org.sasha0552.ledger.LedgerExpectPlatform
 import net.minecraft.server.command.CommandManager
 import net.minecraft.text.ClickEvent
 import net.minecraft.text.Text
@@ -102,8 +101,4 @@ object StatusCommand : BuildableCommand {
 
         return 1
     }
-
-    private fun getVersion() = SemanticVersion.parse(
-        FabricLoader.getInstance().getModContainer(Ledger.MOD_ID).get().metadata.version.friendlyString
-    )
 }

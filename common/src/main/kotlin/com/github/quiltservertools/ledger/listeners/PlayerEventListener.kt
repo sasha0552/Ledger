@@ -9,12 +9,13 @@ import com.github.quiltservertools.ledger.database.DatabaseManager
 import com.github.quiltservertools.ledger.network.Networking.disableNetworking
 import com.github.quiltservertools.ledger.utility.inspectBlock
 import com.github.quiltservertools.ledger.utility.isInspecting
+import dev.architectury.event.EventResult
 import kotlinx.coroutines.launch
 import dev.architectury.event.events.common.InteractionEvent
 import dev.architectury.event.events.common.BlockEvent
-import dev.architectury.event.events.common.InteractionEvent
 import org.sasha0552.ledger.networking.PacketSender
 import dev.architectury.event.events.common.PlayerEvent
+import dev.architectury.utils.value.IntValue
 import net.minecraft.block.BlockState
 import net.minecraft.block.entity.BlockEntity
 import net.minecraft.entity.ItemEntity
@@ -22,6 +23,7 @@ import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemPlacementContext
 import net.minecraft.server.MinecraftServer
 import net.minecraft.server.network.ServerPlayNetworkHandler
+import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.ActionResult
 import net.minecraft.util.Hand
 import net.minecraft.util.hit.BlockHitResult
@@ -39,45 +41,44 @@ fun registerPlayerListeners() {
     ItemDropCallback.EVENT.register(::onItemDrop)
 }
 
-fun onLeave(handler: ServerPlayNetworkHandler, server: MinecraftServer) {
-    handler.player.disableNetworking()
+fun onLeave(player: ServerPlayerEntity) {
+    player.disableNetworking()
 }
 
 private fun onUseBlock(
     player: PlayerEntity,
-    world: World,
     hand: Hand,
-    blockHitResult: BlockHitResult
-): ActionResult {
+    pos: BlockPos,
+    direction: Direction
+): EventResult {
     if (player.isInspecting() && hand == Hand.MAIN_HAND) {
-        player.commandSource.inspectBlock(blockHitResult.blockPos.offset(blockHitResult.side))
-        return ActionResult.SUCCESS
+        player.commandSource.inspectBlock(pos.offset(direction))
+        return EventResult.interruptTrue()
     }
 
-    return ActionResult.PASS
+    return EventResult.pass()
 }
 
 private fun onBlockAttack(
     player: PlayerEntity,
-    world: World,
     hand: Hand,
     pos: BlockPos,
     direction: Direction
-): ActionResult {
-    if (world.isClient) return ActionResult.PASS
+): EventResult {
+    if (player.world.isClient) return EventResult.pass()
 
     if (player.isInspecting()) {
         player.commandSource.inspectBlock(pos)
-        return ActionResult.SUCCESS
+        return EventResult.interruptTrue()
     }
 
-    return ActionResult.PASS
+    return EventResult.pass()
 }
 
 
-private fun onJoin(networkHandler: ServerPlayNetworkHandler, packetSender: PacketSender, server: MinecraftServer) {
+private fun onJoin(player: ServerPlayerEntity) {
     Ledger.launch {
-        DatabaseManager.logPlayer(networkHandler.player.uuid, networkHandler.player.nameForScoreboard)
+        DatabaseManager.logPlayer(player.uuid, player.entityName)
     }
 }
 
@@ -101,21 +102,22 @@ private fun onBlockPlace(
 }
 
 private fun onBlockBreak(
-    world: World,
-    player: PlayerEntity,
-    pos: BlockPos,
-    state: BlockState,
-    blockEntity: BlockEntity?
-) {
+    world: World?,
+    pos: BlockPos?,
+    state: BlockState?,
+    player: ServerPlayerEntity?,
+    xp: IntValue?
+): EventResult? {
     ActionQueueService.addToQueue(
         ActionFactory.blockBreakAction(
-            world,
-            pos,
-            state,
-            player,
-            blockEntity
+            world!!,
+            pos!!,
+            state!!,
+            player!!,
+            world.getBlockEntity(pos)
         )
     )
+    return EventResult.pass()
 }
 
 private fun onItemPickUp(

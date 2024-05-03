@@ -16,6 +16,7 @@ import net.minecraft.server.MinecraftServer
 import net.minecraft.server.network.ServerPlayNetworkHandler
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.Identifier
+import org.sasha0552.ledger.networking.PlayerPacketSender
 
 object Networking {
     // List of players who have a compatible client mod
@@ -33,14 +34,17 @@ object Networking {
     }
 
     private fun register(channel: Identifier, receiver: Receiver) {
-        NetworkManager.registerReceiver(channel) {
-                server: MinecraftServer,
-                player: ServerPlayerEntity,
-                handler: ServerPlayNetworkHandler,
+        NetworkManager.registerReceiver(NetworkManager.Side.C2S, channel) {
                 buf: PacketByteBuf,
-                sender: PacketSender ->
+                context: NetworkManager.PacketContext ->
+            run {
+                val server = context.player.server!!
+                val player = context.player as ServerPlayerEntity
+                val handler = player.networkHandler
+                val sender = PlayerPacketSender(player)
 
-                    receiver.receive(server, player, handler, buf, sender)
+                receiver.receive(server, player, handler, buf, sender)
+            }
         }
     }
 

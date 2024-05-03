@@ -58,6 +58,7 @@ object Ledger : CoroutineScope {
 
     override val coroutineContext: CoroutineContext = Dispatchers.IO
 
+    @JvmStatic
     fun onInitializeServer() {
         val version = LedgerExpectPlatform.getModVersionFriendlyString()
         logInfo("Initializing Ledger $version")
@@ -77,11 +78,20 @@ object Ledger : CoroutineScope {
         CommandRegistrationEvent.EVENT.register { dispatcher, _, _ -> registerCommands(dispatcher) }
     }
 
+    private fun registerWorlds() {
+        for (world in server.worlds) {
+            Ledger.launch {
+                DatabaseManager.registerWorld(world.registryKey.value)
+            }
+        }
+    }
+
     private fun serverStarting(server: MinecraftServer) {
         this.server = server
         ExtensionManager.serverStarting(server)
         DatabaseManager.setup(ExtensionManager.getDataSource())
         DatabaseManager.ensureTables()
+        registerWorlds()
 
         ActionRegistry.registerDefaultTypes()
         initListeners()
